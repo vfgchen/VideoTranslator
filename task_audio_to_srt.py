@@ -19,7 +19,10 @@ async def main():
     suffix = args.suffix
     model_name = args.model_name
     files = list_files(audio_dir, suffix)
-    await async_batch_exec(files, audio_to_subtitle, WhisperAudioRecognizer(model_name=model_name), batch_size=2)
+    await async_batch_exec(files,
+                           audio_to_subtitle,
+                           WhisperAudioRecognizer(model_name=model_name),
+                           batch_size=1) # 语音识别只能一次一个执行，并行会报错
 
 if __name__ == "__main__":
     asyncio.run(main())
