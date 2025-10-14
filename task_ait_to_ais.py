@@ -1,4 +1,5 @@
 import asyncio
+import argparse
 
 from functools import partial
 
@@ -9,12 +10,21 @@ from subtitle import *
 from openai_deepseek import *
 
 async def main():
+    parser = argparse.ArgumentParser(description="*.ait to *.ais")
+    parser.add_argument("--subtitle_dir", help="subtitle directory", default=f"{subtitle_dir}")
+    parser.add_argument("--suffix", help="req filename suffix", default=".ait")
+    parser.add_argument("api_key", help="api_key", default="")
+    args = parser.parse_args()
+
+    subtitle_dir = args.subtitle_dir
+    suffix = args.suffix
+
     # 先删除 ait_to_ais.err
     ait_to_ais_err_path = project_resolve(subtitle_dir, "ait_to_ais.err")
     await remove_file(ait_to_ais_err_path)
 
     # 生成 *.ais
-    files = list_files(subtitle_dir, ".ait")
+    files = list_files(subtitle_dir, suffix)
     tuples = await async_batch_exec(files, ait_to_ais, "en")
     
     # 有错重新生成 ait_to_ais.err
@@ -23,7 +33,6 @@ async def main():
         errors.extend(errs)
     if len(errors) > 0:
         await write_lines(ait_to_ais_err_path, errors)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

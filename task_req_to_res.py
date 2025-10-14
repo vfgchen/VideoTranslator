@@ -10,11 +10,13 @@ from subtitle import *
 from openai_deepseek import *
 
 async def main():
-    parser = argparse.ArgumentParser(description="deepseek req to res")
+    parser = argparse.ArgumentParser(description="*.req to *.res")
+    parser.add_argument("--subtitle_dir", help="subtitle directory", default=f"{subtitle_dir}")
+    parser.add_argument("--suffix", help="req filename suffix", default=".req")
     parser.add_argument("api_key", help="api_key", default="")
     args = parser.parse_args()
 
-    files = list_files(subtitle_dir, ".req")
+    files = list_files(subtitle_dir, args.suffix)
     for batch in batch_generator(files, batch_size=10):
         await async_batch_exec(batch, req_to_res, DeepseekTxtTranslator(
             api_key=args.api_key,
