@@ -58,11 +58,8 @@ async def req_to_res(req_path, chat_client: AiChatClient, remove_req=True) -> st
 async def res_parse(res_path) -> Tuple[list, list]:
     res_lines = [line.strip() for line in await read_lines(res_path) if res_line_regex.match(line)]
     if len(res_lines) == 0: return [], []
-    try:
-        assert len(res_lines) % 2 == 0
-    except:
-        print(f"res_parse failure: {res_path}, total lines: {len(res_lines)}")
-        raise
+    res_name = path.basename(res_path)
+    assert len(res_lines) % 2 == 0, f"{res_name} : total_lines = {len(res_lines)}"
 
     seq_1 = int(res_line_regex.match(res_lines[0])["seq"])
     seq_2 = int(res_line_regex.match(res_lines[1])["seq"])
@@ -77,22 +74,26 @@ async def res_parse(res_path) -> Tuple[list, list]:
         size = len(res_lines)
         en_lines = [line for index, line in enumerate(res_lines) if pattern_2(index, size)]
         zh_lines = [line for index, line in enumerate(res_lines) if not pattern_2(index, size)]
-    assert len(en_lines) == len(zh_lines)
+    assert len(en_lines) == len(zh_lines), f"{res_name} : en_lines != zh_lines"
     return en_lines, zh_lines
 
 # *.res check
 async def res_check(res_path) -> Tuple[bool, str, str]:
+    res_name = path.basename(res_path)
+
     # 读取并解析 *.res
-    en_res_lines, zh_res_lines = await res_parse(res_path)
+    try:
+        en_res_lines, zh_res_lines = await res_parse(res_path)
+    except AssertionError as e:
+        return False, res_name, f"{res_name} : res_parse failure: {e}"
 
     # *-en.txt
     txt_path = with_ext(res_path, "txt")
-    assert path.exists(txt_path)
+    txt_name = path.basename(txt_path)
+    assert path.exists(txt_path), f"not exists {txt_name}"
     txt_lines = [line.strip() for line in await read_lines(txt_path) if len(line.strip()) > 0]
 
     # 校验行数
-    txt_name = path.basename(txt_path)
-    res_name = path.basename(res_path)
     len_res  = len(en_res_lines)
     len_txt  = len(txt_lines)
     if len_res != len_txt:
