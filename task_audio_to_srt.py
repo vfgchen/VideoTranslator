@@ -1,4 +1,5 @@
 import asyncio
+import argparse
 
 from util import *
 from audio import *
@@ -10,8 +11,15 @@ async def audio_to_subtitle(audio_path, recognizer: AudioRecognizer):
     await audio_to_srt(audio_path, srt_path, recognizer)
 
 async def main():
-    files = list_files(audio_dir, ".mp3")
-    await async_batch_exec(files, audio_to_subtitle, WhisperAudioRecognizer(model_name="medium"))
+    parser = argparse.ArgumentParser(description="audio to srt")
+    parser.add_argument("--suffix", help="audio filename suffix", default=".wav")
+    parser.add_argument("--model_name", help="whisper model name", default="medium")
+    args = parser.parse_args()
+
+    suffix = args.suffix
+    model_name = args.model_name
+    files = list_files(audio_dir, suffix)
+    await async_batch_exec(files, audio_to_subtitle, WhisperAudioRecognizer(model_name=model_name))
 
 if __name__ == "__main__":
     asyncio.run(main())
