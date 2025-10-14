@@ -83,7 +83,7 @@ async def res_parse(res_path) -> Tuple[list, list]:
 # *.res check
 async def res_check(res_path) -> Tuple[bool, str, str]:
     # 读取并解析 *.res
-    en_res_lines, zh_res_lines = res_parse(res_path)
+    en_res_lines, zh_res_lines = await res_parse(res_path)
 
     # *-en.txt
     txt_path = with_ext(res_path, "txt")
@@ -99,8 +99,7 @@ async def res_check(res_path) -> Tuple[bool, str, str]:
         return False, res_name, f"{res_name} : {len_res} : {len_txt} : {txt_name}"
     
     # 校验序号
-    res_lines = [].extend(en_res_lines).extend(zh_res_lines)
-    for index, res_line in enumerate(res_lines):
+    for index, res_line in enumerate([*en_res_lines, *zh_res_lines]):
         txt_line = txt_lines[index % len_txt]
         res_seq = res_line_regex.match(res_line)["seq"]
         txt_seq = res_line_regex.match(txt_line)["seq"]
@@ -111,7 +110,7 @@ async def res_check(res_path) -> Tuple[bool, str, str]:
 # *.res -> *-en.ait *-zh.ait
 async def res_to_ait(res_path) -> Tuple[str, str]:
     # 读取并解析 *.res
-    en_lines, zh_lines = res_parse(res_path)
+    en_lines, zh_lines = await res_parse(res_path)
 
     # 生成 *-en.ait *-zh.ait
     en_ait_path = with_lang_ext(res_path, "en", "ait")
