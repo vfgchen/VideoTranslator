@@ -14,11 +14,12 @@ async def video_to_audio(video_path, ext="mp3"):
 
 async def main():
     parser = argparse.ArgumentParser(description="video to audio")
+    parser.add_argument("--video_dir", help="video directory", default=f"{video_dir}")
     parser.add_argument("--suffix", help="video filename suffix", default="en.mp4")
     parser.add_argument("--to_ext", help="to audio type", default="mp3")
     args = parser.parse_args()
 
-    files = list_files(video_dir, args.suffix)
+    files = list_files(args.video_dir, args.suffix)
     await async_batch_exec(files, video_to_audio, args.to_ext)
 
 if __name__ == "__main__":

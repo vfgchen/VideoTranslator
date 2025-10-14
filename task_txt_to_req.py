@@ -7,7 +7,7 @@ from subtitle import *
 from openai_deepseek import *
 
 async def main():
-    files = list_files(subtitle_dir, "123*.txt")
+    files = list_files(subtitle_dir, ".txt")
     await async_batch_exec(files, txt_to_req, "Power Platform PL-100")
 
 if __name__ == "__main__":

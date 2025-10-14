@@ -12,7 +12,7 @@ async def main():
     if path.exists(ait_check_err):
         os.remove(ait_check_err)
 
-    files = list_files(subtitle_dir, "en.ait")
+    files = list_files(subtitle_dir, "ait")
     results = await async_batch_exec(files, ait_check)
     lines = [err_info for match, err_info in results if not match]
     if len(lines) == 0:
