@@ -54,9 +54,36 @@ async def req_to_res(req_path, chat_client: AiChatClient, remove_req=True) -> st
 
     return res_path
 
+# 解析 *.res
+async def res_parse(res_path) -> Tuple[list, list]:
+    res_lines = [line.strip() for line in await read_lines(res_path) if res_line_regex.match(line)]
+    if len(res_lines) == 0: return [], []
+    try:
+        assert len(res_lines) % 2 == 0
+    except:
+        print(f"res_parse failure: {res_path}, total lines: {len(res_lines)}")
+        raise
+
+    seq_1 = int(res_line_regex.match(res_lines[0])["seq"])
+    seq_2 = int(res_line_regex.match(res_lines[1])["seq"])
+    pattern_1 = lambda index: index % 2 == 0
+    pattern_2 = lambda index, size: index < size / 2
+    if seq_1 == seq_2:
+        # 英文和中文交替模式
+        en_lines = [line for index, line in enumerate(res_lines) if pattern_1(index)]
+        zh_lines = [line for index, line in enumerate(res_lines) if not pattern_1(index)]
+    else:
+        # 先英文后中文模式
+        size = len(res_lines)
+        en_lines = [line for index, line in enumerate(res_lines) if pattern_2(index, size)]
+        zh_lines = [line for index, line in enumerate(res_lines) if not pattern_2(index, size)]
+    assert len(en_lines) == len(zh_lines)
+    return en_lines, zh_lines
+
 # *.res check
 async def res_check(res_path) -> Tuple[bool, str, str]:
-    res_lines = [line.strip() for line in await read_lines(res_path) if res_line_regex.match(line)]
+    # 读取并解析 *.res
+    en_res_lines, zh_res_lines = res_parse(res_path)
 
     # *-en.txt
     txt_path = with_ext(res_path, "txt")
@@ -66,12 +93,13 @@ async def res_check(res_path) -> Tuple[bool, str, str]:
     # 校验行数
     txt_name = path.basename(txt_path)
     res_name = path.basename(res_path)
-    len_res  = int(len(res_lines) / 2)
+    len_res  = len(en_res_lines)
     len_txt  = len(txt_lines)
     if len_res != len_txt:
         return False, res_name, f"{res_name} : {len_res} : {len_txt} : {txt_name}"
     
     # 校验序号
+    res_lines = [].extend(en_res_lines).extend(zh_res_lines)
     for index, res_line in enumerate(res_lines):
         txt_line = txt_lines[index % len_txt]
         res_seq = res_line_regex.match(res_line)["seq"]
@@ -82,26 +110,8 @@ async def res_check(res_path) -> Tuple[bool, str, str]:
 
 # *.res -> *-en.ait *-zh.ait
 async def res_to_ait(res_path) -> Tuple[str, str]:
-    # 读取 res 文件中有效行
-    lines = await read_lines(res_path)
-    lines = [
-        line.strip() for line in lines if res_line_regex.match(line)
-    ]
-
-    # 进行英文和中文拆分
-    en_lines = []
-    zh_lines = []
-    length = len(lines)
-    for index, line in enumerate(lines):
-        if index < length / 2:
-            en_lines.append(line)
-        else:
-            zh_lines.append(line)
-    try:
-        assert len(en_lines) == len(zh_lines)
-    except:
-        print(f"res_to_ait: {res_path} {len(en_lines)} : {len(zh_lines)}")
-        raise
+    # 读取并解析 *.res
+    en_lines, zh_lines = res_parse(res_path)
 
     # 生成 *-en.ait *-zh.ait
     en_ait_path = with_lang_ext(res_path, "en", "ait")
