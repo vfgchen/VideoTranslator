@@ -16,11 +16,17 @@ async def srt_to_audio(srt_path, voice):
 
 async def main():
     parser = argparse.ArgumentParser(description="ais to mp3")
-    parser.add_argument("suffix", help="srt file suffix: zh.ais, zh.srt", default="zh.ais")
+    parser.add_argument("--subtitle_dir", help="subtitle directory", default="subtitles")
+    parser.add_argument("--suffix", help="srt file suffix: zh.ais, zh.srt", default="zh.ais")
+    parser.add_argument("--voice", help="dubbing voice", default="zh-CN-XiaoxiaoNeural")
     args = parser.parse_args()
 
-    files = list_files(subtitle_dir, args.suffix)
-    await async_batch_exec(files, srt_to_audio, "zh-CN-XiaoxiaoNeural")
+    subtitle_dir=args.subtitle_dir
+    suffix=args.suffix
+    voice=args.voice
+
+    files = list_files(subtitle_dir, suffix)
+    await async_batch_exec(files, srt_to_audio, voice)
 
 if __name__ == "__main__":
     asyncio.run(main())

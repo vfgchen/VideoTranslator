@@ -14,12 +14,6 @@ async def namp4_mp3_srts_merge(file_path, mp4_dir, mp3_dir, srt_dir, srt_type="a
     ensrt_path = path.join(srt_dir, f"{basename}-en.{srt_type}")
     zhmp4_path = path.join(mp4_dir, f"{basename}-zh.mp4")
 
-    print(namp4_path)
-    print(zhmp3_path)
-    print(ensrt_path)
-    print(zhsrt_path)
-    print(zhmp4_path)
-
     assert path.exists(namp4_path)
     assert path.exists(zhmp3_path)
     assert path.exists(ensrt_path)
@@ -49,7 +43,7 @@ async def main():
     srt_type = args.srt_type
 
     files = list_files(root_dir, suffix)
-    await async_batch_exec(files, namp4_mp3_srts_merge, mp4_dir, mp3_dir, srt_dir, srt_type, batch_size=1)
+    await async_batch_exec(files, namp4_mp3_srts_merge, mp4_dir, mp3_dir, srt_dir, srt_type)
 
 if __name__ == "__main__":
     asyncio.run(main())

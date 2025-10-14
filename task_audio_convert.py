@@ -11,12 +11,17 @@ async def audio_to_audio(input_path, to_ext="wav"):
 
 async def main():
     parser = argparse.ArgumentParser(description="audio convert")
+    parser.add_argument("--audio_dir", help="audio directory", default="audios")
     parser.add_argument("--suffix", help="audio filename suffix", default="mp3")
-    parser.add_argument("--to_ext", help="to audio type", default="wav")
+    parser.add_argument("--to_ext", help="audio to type", default="wav")
     args = parser.parse_args()
 
-    files = list_files(audio_dir, args.suffix)
-    await async_batch_exec(files, audio_to_audio, args.to_ext)
+    audio_dir=args.audio_dir
+    suffix=args.suffix
+    to_ext=args.to_ext
+
+    files = list_files(audio_dir, suffix)
+    await async_batch_exec(files, audio_to_audio, to_ext)
 
 if __name__ == "__main__":
     asyncio.run(main())

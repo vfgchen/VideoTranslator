@@ -69,7 +69,6 @@ async def video_audio_srts_merge(
     assert path.exists(zh_audio)
     assert path.exists(zh_srt)
     assert path.exists(en_srt)
-    assert path.exists(zh_video)
 
     """
     # 视频音频字幕合并

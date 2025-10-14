@@ -12,12 +12,15 @@ async def audio_to_subtitle(audio_path, recognizer: AudioRecognizer):
 
 async def main():
     parser = argparse.ArgumentParser(description="audio to srt")
+    parser.add_argument("--audio_dir", help="audio directory", default="audios")
     parser.add_argument("--suffix", help="audio filename suffix", default=".wav")
     parser.add_argument("--model_name", help="whisper model name", default="medium")
     args = parser.parse_args()
 
-    suffix = args.suffix
-    model_name = args.model_name
+    audio_dir=args.audio_dir
+    suffix=args.suffix
+    model_name=args.model_name
+
     files = list_files(audio_dir, suffix)
     await async_batch_exec(files,
                            audio_to_subtitle,

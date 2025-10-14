@@ -8,7 +8,17 @@ from subtitle import *
 from openai_deepseek import *
 
 async def main():
-    files = list_files(subtitle_dir, ".res")
+    parser = argparse.ArgumentParser(description="*.res check")
+    parser.add_argument("--subtitle_dir", help="subtitle directory", default="subtitles")
+    parser.add_argument("--suffix", help="res filename suffix", default=".res")
+    parser.add_argument("--topic", help="topic", default="")
+    args = parser.parse_args()
+
+    subtitle_dir=args.subtitle_dir
+    suffix=args.suffix
+    topic=args.topic
+
+    files = list_files(subtitle_dir, suffix)
     
     # 执行 *.res 检查
     results = await async_batch_exec(files, res_check)
@@ -28,7 +38,7 @@ async def main():
     # 存在错误时，恢复 *.req 文件
     txt_names = [with_ext(res_name, "txt") for match, res_name, err_info in results if not match]
     txt_paths = [project_resolve(subtitle_dir, txt_name) for txt_name in txt_names]
-    await async_batch_exec(txt_paths, txt_to_req, "Power Platform PL-100")
+    await async_batch_exec(txt_paths, txt_to_req, topic)
 
 if __name__ == "__main__":
     asyncio.run(main())
