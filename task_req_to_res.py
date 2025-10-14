@@ -28,7 +28,7 @@ async def main():
 
     files = list_files(subtitle_dir, suffix)
     for batch in batch_generator(files, batch_size):
-        await async_batch_exec(batch, req_to_res, DeepseekTxtTranslator(
+        await async_batch_exec(batch, req_to_res, OpenAiChatClient(
             api_key=api_key,
             base_url=base_url,
             model=model,

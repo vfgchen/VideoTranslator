@@ -1,15 +1,16 @@
 import os
 import re
 import pysrt
-from typing import List, Tuple, Callable
+from typing import List, Tuple
 from openai import AsyncOpenAI
 
 from prompt import *
 from util import *
 from subtitle import *
 
-api_key  = os.environ.get('DEEPSEEK_API_KEY')
-base_url = "https://api.deepseek.com"
+api_key  = os.environ.get('OPENAI_API_KEY')
+base_url = "https://api.siliconflow.cn/v1"
+model    = "deepseek-ai/DeepSeek-V3.2-Exp"
 
 # res 行的正则匹配
 res_line_regex = re.compile(r"^(?P<seq>\d+)[\.\s]*(?P<text>.*)$")
@@ -174,8 +175,8 @@ async def ait_to_ais(ait_path, ref_srt_lang="en") -> Tuple[str, list]:
     return ais_path, errors
 
 # Deepseek 文本翻译器
-class DeepseekTxtTranslator(TxtTranslator, AiChatClient):
-    def __init__(self, topic, model="deepseek-chat", api_key=api_key, base_url=base_url):
+class OpenAiChatClient(AiChatClient):
+    def __init__(self, topic, model=model, api_key=api_key, base_url=base_url):
         self.topic = topic
         self.model = model
         self.chat_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
@@ -193,23 +194,3 @@ class DeepseekTxtTranslator(TxtTranslator, AiChatClient):
         output = response.choices[0].message.content
         print(f"chat receive: {output}")
         return output
-
-    # 翻译文本
-    async def txt_to_ait(self, txt_path: str) -> Tuple[str, str]:
-        """返回翻译后*-zh.ait文件和中文文本"""
-        # 生成 *.req, 存储发送的对话请求
-        req_path, chat_content = await txt_to_req(txt_path, self.topic)
-
-        # AI 对话翻译
-        chat_result = await self.chat(chat_content)
-
-        # 生成 *.res，存储接受到的对话输出
-        res_path = with_ext(req_path, "res")
-        await write_text(res_path, chat_result)
-
-        # 生成 *-en.ait, *-zh.ait
-        en_ait_path, zh_ait_path = await res_to_ait(res_path)
-
-        # 读取 *-zh.ait 内容并返回
-        return zh_ait_path, await read_file(zh_ait_path)
-

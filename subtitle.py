@@ -2,7 +2,6 @@ import pysrt
 from edge_srt_to_speech.__main__ import _main as audio_synthesis
 
 from util import *
-from typing import List, Tuple
 
 # 文本翻译器
 class TextTranslator:
@@ -13,12 +12,6 @@ class TextTranslator:
 class AiChatClient:
     @classmethod
     async def chat(self, input: str) -> str:...
-
-# txt 文件翻译器
-class TxtTranslator:
-    """返回翻译后*-zh.ait文件和中文文本"""
-    @classmethod
-    async def txt_to_ait(txt_path: str) -> Tuple[str, str]:...
 
 # *.srt , *.ais -> *.mp3 语音合成
 async def srt_to_mp3(srt_path, mp3_path, voice="zh-CN-XiaoxiaoNeural", delete_ais=False) -> str:
