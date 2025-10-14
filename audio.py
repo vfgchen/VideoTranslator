@@ -23,8 +23,10 @@ class AudioRecognizer:
     async def recognize(self, audio_path: str) -> pysrt.SubRipFile: ...
 
 # 语音识别生成字幕
-async def audio_to_srt(audio_path: str, srt_path: str, recognizer: AudioRecognizer) -> str:
+async def audio_to_srt(audio_path: str, srt_path: str, recognizer: AudioRecognizer, delete_audio=False) -> str:
     srt_subs = await recognizer.recognize(audio_path)
     srt_subs.save(path=srt_path, encoding="utf-8")
+    if delete_audio:
+        await remove_file(audio_path)
     print(f"audio_to_srt: {audio_path} -> {srt_path}")
     return srt_path
