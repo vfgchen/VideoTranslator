@@ -21,7 +21,7 @@ class TxtTranslator:
     async def txt_to_ait(txt_path: str) -> Tuple[str, str]:...
 
 # *.srt , *.ais -> *.mp3 语音合成
-async def srt_to_mp3(srt_path, mp3_path, voice="zh-CN-XiaoxiaoNeural") -> str:
+async def srt_to_mp3(srt_path, mp3_path, voice="zh-CN-XiaoxiaoNeural", delete_ais=False) -> str:
     mkdir_by_file(mp3_path)
     # 字幕语音合成
     await audio_synthesis(
@@ -33,4 +33,5 @@ async def srt_to_mp3(srt_path, mp3_path, voice="zh-CN-XiaoxiaoNeural") -> str:
         batch_size = 50,
         enhanced_srt = False,
     )
+    if delete_ais: await remove_file(srt_path)
     return mp3_path
