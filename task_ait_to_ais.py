@@ -11,13 +11,14 @@ from openai_deepseek import *
 
 async def main():
     parser = argparse.ArgumentParser(description="*.ait to *.ais")
-    parser.add_argument("--subtitle_dir", help="subtitle directory", default=f"{subtitle_dir}")
+    parser.add_argument("--subtitle_dir", help="subtitle directory", default="subtitles")
     parser.add_argument("--suffix", help="req filename suffix", default=".ait")
-    parser.add_argument("api_key", help="api_key", default="")
+    parser.add_argument("--ref_lang", help="req filename suffix", default="en")
     args = parser.parse_args()
 
     subtitle_dir = args.subtitle_dir
     suffix = args.suffix
+    ref_lang = args.ref_lang
 
     # 先删除 ait_to_ais.err
     ait_to_ais_err_path = project_resolve(subtitle_dir, "ait_to_ais.err")
@@ -25,7 +26,7 @@ async def main():
 
     # 生成 *.ais
     files = list_files(subtitle_dir, suffix)
-    tuples = await async_batch_exec(files, ait_to_ais, "en")
+    tuples = await async_batch_exec(files, ait_to_ais, ref_lang)
     
     # 有错重新生成 ait_to_ais.err
     errors = []
