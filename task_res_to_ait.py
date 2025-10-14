@@ -8,7 +8,15 @@ from subtitle import *
 from openai_deepseek import *
 
 async def main():
-    files = list_files(subtitle_dir, ".res")
+    parser = argparse.ArgumentParser(description="*.res to *.ait")
+    parser.add_argument("--subtitle_dir", help="subtitle directory", default="subtitles")
+    parser.add_argument("--suffix", help="res filename suffix", default=".res")
+    args = parser.parse_args()
+
+    subtitle_dir=args.subtitle_dir
+    suffix=args.suffix
+
+    files = list_files(subtitle_dir, suffix)
     await async_batch_exec(files, res_to_ait)
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ from os import path
 
 from util import *
 
-async def video_to_na_mp4(input: str, output: str) -> str:
+async def video_to_namp4(input: str, output: str) -> str:
     """
     提取无声视频
     ffmpeg -y -i "demo-en.mp4" -an -vcodec copy "demo-na.mp4"

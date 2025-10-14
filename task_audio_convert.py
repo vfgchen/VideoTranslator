@@ -12,13 +12,13 @@ async def audio_to_audio(input_path, to_ext="wav"):
 async def main():
     parser = argparse.ArgumentParser(description="audio convert")
     parser.add_argument("--audio_dir", help="audio directory", default="audios")
-    parser.add_argument("--suffix", help="audio filename suffix", default="mp3")
-    parser.add_argument("--to_ext", help="audio to type", default="wav")
+    parser.add_argument("-f", help="audio from type", default="mp3")
+    parser.add_argument("-t", help="audio to type", default="wav")
     args = parser.parse_args()
 
     audio_dir=args.audio_dir
-    suffix=args.suffix
-    to_ext=args.to_ext
+    suffix=args.f
+    to_ext=args.t
 
     files = list_files(audio_dir, suffix)
     await async_batch_exec(files, audio_to_audio, to_ext)

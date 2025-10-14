@@ -37,6 +37,8 @@ async def main():
 
     root_dir = args.root_dir
     suffix   = args.suffix
+    root_dir = args.root_dir
+    suffix   = args.suffix
     mp4_dir  = path.join(root_dir, args.mp4_dirname)
     mp3_dir  = path.join(root_dir, args.mp3_dirname)
     srt_dir  = path.join(root_dir, args.srt_dirname)
