@@ -24,8 +24,12 @@ class AudioRecognizer:
 
 # 语音识别生成字幕
 async def audio_to_srt(audio_path: str, srt_path: str, recognizer: AudioRecognizer, delete_audio=False) -> str:
-    srt_subs = await recognizer.recognize(audio_path)
-    srt_subs.save(path=srt_path, encoding="utf-8")
+    try:
+        srt_subs = await recognizer.recognize(audio_path)
+        srt_subs.save(path=srt_path, encoding="utf-8")
+    except:
+        print(f"audio_to_srt failure: {audio_path}")
+        raise
     if delete_audio:
         await remove_file(audio_path)
     print(f"audio_to_srt: {audio_path} -> {srt_path}")
