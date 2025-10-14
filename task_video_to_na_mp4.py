@@ -5,7 +5,9 @@ from util import *
 from video import *
 
 async def video_to_namp4(video_path):
-    namp4_path = video_path.split("-")[0] + "-na.mp4"
+    video_dir = path.dirname(video_path)
+    namp4_name = path.basename(video_path).split("-")[0] + "-na.mp4"
+    namp4_path = path.join(video_dir, namp4_name)
     await video_to_na_mp4(video_path, namp4_path)
 
 async def main():
