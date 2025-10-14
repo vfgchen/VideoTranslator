@@ -1,4 +1,5 @@
 import asyncio
+import argparse
 
 from functools import partial
 
@@ -14,7 +15,11 @@ async def srt_to_audio(srt_path, voice):
     return await srt_to_mp3(srt_path, audio_path, voice)
 
 async def main():
-    files = list_files(subtitle_dir, ".srt")
+    parser = argparse.ArgumentParser(description="ais to mp3")
+    parser.add_argument("suffix", help="srt file suffix: zh.ais, zh.srt", default="zh.ais")
+    args = parser.parse_args()
+
+    files = list_files(subtitle_dir, args.suffix)
     await async_batch_exec(files, srt_to_audio, "zh-CN-XiaoxiaoNeural")
 
 if __name__ == "__main__":
