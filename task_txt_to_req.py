@@ -1,11 +1,9 @@
 import asyncio
 import argparse
 
-from util import *
+from common_util import *
 from audio import *
 from subtitle import *
-
-from openai_deepseek import *
 
 async def main():
     parser = argparse.ArgumentParser(description="*.txt to *.req")

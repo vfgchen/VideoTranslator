@@ -1,7 +1,7 @@
 import asyncio
 import argparse
 
-from util import *
+from common_util import *
 from video import *
 
 async def video_to_audio(video_path, ext="mp3"):

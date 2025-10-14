@@ -1,7 +1,7 @@
 import asyncio
 import argparse
 
-from util import *
+from common_util import *
 from video import *
 
 async def video_to_namp4video(video_path):

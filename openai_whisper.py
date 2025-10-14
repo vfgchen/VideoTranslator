@@ -2,7 +2,8 @@ import whisper
 import torch
 import pysrt
 from functools import partial
-from util import *
+
+from common_util import *
 from audio import AudioRecognizer
 
 # Whisper 语音识别器

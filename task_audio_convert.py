@@ -1,7 +1,7 @@
 import asyncio
 import argparse
 
-from util import *
+from common_util import *
 from audio import *
 
 async def audio_to_audio(input_path, to_ext="wav"):

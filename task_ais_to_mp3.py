@@ -3,11 +3,9 @@ import argparse
 
 from functools import partial
 
-from util import *
+from common_util import *
 from audio import *
 from subtitle import *
-
-from openai_deepseek import *
 
 async def srt_to_audio(srt_path, voice):
     audio_name = with_ext(path.basename(srt_path), "mp3")

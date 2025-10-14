@@ -3,7 +3,7 @@ import argparse
 
 from os import path
 
-from util import *
+from common_util import *
 from video import *
 
 async def namp4_mp3_srts_merge(file_path, mp4_dir, mp3_dir, srt_dir, srt_type="ais"):

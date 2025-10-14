@@ -1,7 +1,7 @@
 import asyncio
 import argparse
 
-from util import *
+from common_util import *
 from audio import *
 from openai_whisper import *
 
