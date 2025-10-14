@@ -19,7 +19,7 @@ async def main():
     suffix = args.suffix
     model_name = args.model_name
     files = list_files(audio_dir, suffix)
-    await async_batch_exec(files, audio_to_subtitle, WhisperAudioRecognizer(model_name=model_name))
+    await async_batch_exec(files, audio_to_subtitle, WhisperAudioRecognizer(model_name=model_name), batch_size=2)
 
 if __name__ == "__main__":
     asyncio.run(main())
