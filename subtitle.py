@@ -16,12 +16,27 @@ model    = "deepseek-ai/DeepSeek-V3.2-Exp"
 # res 行的正则匹配
 res_line_regex = re.compile(r"^(?P<seq>\d+)[\.\s]*(?P<text>.*)$")
 
+# srt 修正，删除空行，无效行
+def srt_correct(srt_path):
+    # 读取 srt 文件
+    subs = pysrt.open(srt_path)
+    # 去除其中 text 为空的 sub
+    subs = [sub for sub in subs if len(sub.text.strip()) > 1]
+    # 去除短小的条目
+    # subs = [sub for sub in subs if not sub.text.strip(".,").lower() in ["yeah", "and", "or", "so"]]
+    # 重新编号字幕索引
+    for index, sub in enumerate(subs, start=1):
+        sub.index = index
+    # 重新保存srt
+    pysrt.SubRipFile(subs).save(srt_path, encoding='utf-8')
+    print(f"srt_correct: {srt_path}")
+    return subs
+
 # *.srt -> *.txt
 async def srt_to_txt(srt_path) -> Tuple[str, str]:
+    srt_correct(srt_path)
     txt_path = with_ext(srt_path, "txt")
-    lines = [
-        f"{sub.index}. {sub.text}" for sub in pysrt.open(srt_path)
-    ]
+    lines = [f"{sub.index}. {sub.text}" for sub in pysrt.open(srt_path)]
     await write_lines(txt_path, lines)
     print(f"srt_to_txt: {srt_path} -> {txt_path}")
     return txt_path, "\n".join(lines)
@@ -181,6 +196,7 @@ async def ait_to_ais(ait_path, ref_srt_lang="en") -> Tuple[str, list]:
             errors.append(f"warn : {ait_name}, {ait_line}")
     ais_path = with_ext(ait_path, "ais")
     ais_subs.save(ais_path, encoding="utf-8")
+    srt_correct(ais_path)
 
     print(f"ait_to_ais: {ait_path} -> {ais_path}")
     return ais_path, errors
