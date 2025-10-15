@@ -215,4 +215,5 @@ async def srt_to_mp3(srt_path, mp3_path, voice="zh-CN-XiaoxiaoNeural", delete_ai
         enhanced_srt = False,
     )
     if delete_ais: await remove_file(srt_path)
+    print(f"srt_to_mp3: {srt_path} -> {mp3_path}")
     return mp3_path
