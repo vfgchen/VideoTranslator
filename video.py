@@ -18,6 +18,7 @@ async def video_to_namp4(input: str, output: str) -> str:
             "copy",
             output
         ])
+    print(f"video_to_namp4: {input} -> {output}")
     return output
 
 async def video_to_wav(input: str, output: str) -> str:
@@ -37,6 +38,7 @@ async def video_to_wav(input: str, output: str) -> str:
             "16000",
             output
         ])
+    print(f"video_to_wav: {input} -> {output}")
     return output
     
 async def video_to_mp3(input: str, output: str) -> str:
@@ -56,6 +58,7 @@ async def video_to_mp3(input: str, output: str) -> str:
             "16000",
             output
         ])
+    print(f"video_to_mp3: {input} -> {output}")
     return output
 
 async def video_audio_srts_merge(
@@ -104,4 +107,5 @@ async def video_audio_srts_merge(
             "-c:s", "mov_text",
             zh_video
         ])
+    print(f"video_audio_srts_merge: {na_video} -> {zh_video}")
     return zh_video

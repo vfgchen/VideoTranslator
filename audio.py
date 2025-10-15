@@ -15,6 +15,7 @@ async def audio_convert(input: str, output: str) -> str:
             input,
             output
         ])
+    print(f"audio_convert: {input} -> {output}")
     return output
 
 # 语音识别器
