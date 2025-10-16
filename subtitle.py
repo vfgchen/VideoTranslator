@@ -202,7 +202,7 @@ async def ait_to_ais(ait_path, ref_srt_lang="en") -> Tuple[str, list]:
     return ais_path, errors
 
 # *.srt , *.ais -> *.mp3 语音合成
-async def srt_to_mp3(srt_path, mp3_path, voice="zh-CN-XiaoxiaoNeural", delete_ais=False) -> str:
+async def srt_to_mp3(srt_path, mp3_path, voice="zh-CN-YunyangNeural", delete_ais=False) -> str:
     mkdir_by_file(mp3_path)
     # 字幕语音合成
     await audio_synthesis(

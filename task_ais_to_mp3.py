@@ -16,7 +16,7 @@ async def main():
     parser = argparse.ArgumentParser(description="ais to mp3")
     parser.add_argument("--subtitle_dir", help="subtitle directory", default="subtitles")
     parser.add_argument("--suffix", help="srt file suffix: zh.ais, zh.srt", default="zh.ais")
-    parser.add_argument("--voice", help="dubbing voice", default="zh-CN-XiaoxiaoNeural")
+    parser.add_argument("--voice", help="dubbing voice", default="zh-CN-YunyangNeural")
     args = parser.parse_args()
 
     subtitle_dir=args.subtitle_dir
