@@ -18,7 +18,7 @@ async def main():
 
     subtitle_dir=args.subtitle_dir
     suffix=args.suffix
-    batch_size=args.batch_size
+    batch_size=int(args.batch_size)
     base_url=args.base_url
     api_key=args.api_key
     model=args.model
