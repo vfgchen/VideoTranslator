@@ -16,21 +16,40 @@ model    = "deepseek-ai/DeepSeek-V3.2-Exp"
 # res 行的正则匹配
 res_line_regex = re.compile(r"^(?P<seq>\d+)[\.\s]*(?P<text>.*)$")
 
-# srt 修正，删除空行，无效行
-def srt_correct(srt_path):
+# srt 修正，删除空行，合并短行和单个单词行
+async def srt_correct(srt_path, min_duration=1000):
     # 读取 srt 文件
-    subs = pysrt.open(srt_path)
+    raw_subs = pysrt.open(srt_path)
     # 去除其中 text 为空的 sub
-    subs = [sub for sub in subs if len(sub.text.strip()) > 1]
-    # 去除短小的条目
-    # subs = [sub for sub in subs if not sub.text.strip(".,").lower() in ["yeah", "and", "or", "so"]]
+    raw_subs = [sub for sub in raw_subs if len(sub.text.strip()) > 1]
+    if len(raw_subs) == 1: return srt_path
+    # 合并短行和单个单词行
+    index = 0
+    res_subs = []
+    while index < len(raw_subs):
+        sub = raw_subs[index]
+        if sub.end - sub.start <= min_duration or len(sub.text.strip().split(" ")) == 1:
+            merge_up = (index != 0 and not raw_subs[index-1].text.strip()[-1] in [*".?!"]) or (index == len(raw_subs)-1)
+            if merge_up:
+                prev_sub = res_subs[-1]
+                prev_sub.end  = sub.end
+                prev_sub.text = f"{prev_sub.text} {sub.text}"
+            else:
+                index = index + 1
+                next_sub = raw_subs[index]
+                next_sub.start = sub.start
+                next_sub.text  = f"{sub.text} {next_sub.text}"
+                res_subs.append(next_sub)
+        else:
+            res_subs.append(sub)
+        index = index + 1
     # 重新编号字幕索引
-    for index, sub in enumerate(subs, start=1):
+    for index, sub in enumerate(res_subs, start=1):
         sub.index = index
     # 重新保存srt
-    pysrt.SubRipFile(subs).save(srt_path, encoding='utf-8')
+    pysrt.SubRipFile(res_subs).save(srt_path, encoding="utf-8")
     print(f"srt_correct: {srt_path}")
-    return subs
+    return srt_path
 
 # *.srt -> *.txt
 async def srt_to_txt(srt_path) -> Tuple[str, str]:
