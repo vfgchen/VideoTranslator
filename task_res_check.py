@@ -9,7 +9,7 @@ async def main():
     parser = argparse.ArgumentParser(description="*.res check")
     parser.add_argument("--subtitle_dir", help="subtitle directory", default="subtitles")
     parser.add_argument("--suffix", help="res filename suffix", default=".res")
-    parser.add_argument("--topic", help="topic", default="Power Platform PL-400")
+    parser.add_argument("--topic", help="topic", default="Dynamics 365 F&O SCM")
     args = parser.parse_args()
 
     subtitle_dir=args.subtitle_dir
