@@ -16,14 +16,8 @@ model    = "deepseek-ai/DeepSeek-V3.2-Exp"
 # res 行的正则匹配
 res_line_regex = re.compile(r"^(?P<seq>\d+)[\.\s]*(?P<text>.*)$")
 
-# srt 修正，删除空行，合并短行和单个单词行
-async def srt_correct(srt_path, min_duration=1000, min_word_count=1):
-    # 读取 srt 文件
-    raw_subs = pysrt.open(srt_path)
-    # 去除其中 text 为空的 sub
-    raw_subs = [sub for sub in raw_subs if len(sub.text.strip()) > 1]
-    if len(raw_subs) == 1: return srt_path
-    # 合并短行和单个单词行
+# 合并短行和单个单词行
+def subs_merge(raw_subs, min_duration, min_word_count):
     index = 0
     res_subs = []
     while index < len(raw_subs):
@@ -46,8 +40,25 @@ async def srt_correct(srt_path, min_duration=1000, min_word_count=1):
     # 重新编号字幕索引
     for index, sub in enumerate(res_subs, start=1):
         sub.index = index
+    return res_subs
+
+# srt 修正，删除空行，合并短行和单个单词行
+async def srt_correct(srt_path, min_duration=2000, min_word_count=4, retry_count=2):
+    # 读取 srt 文件, 去除其中 text 为空的 sub
+    raw_subs = pysrt.open(srt_path)
+    res_subs = [sub for sub in raw_subs if len(sub.text.strip()) > 1]
+    if len(res_subs) == 1: return srt_path
+
+    # 合并短行和单个单词行
+    for count in range(retry_count):
+        res_subs = subs_merge(res_subs, min_duration, min_word_count)
+
+    # 重新编号字幕索引
+    for index, sub in enumerate(res_subs, start=1):
+        sub.index = index
+    
     # 重新保存srt
-    pysrt.SubRipFile(res_subs).save(srt_path+".correct", encoding="utf-8")
+    pysrt.SubRipFile(res_subs).save(with_ext(srt_path, "cor"), encoding="utf-8")
     print(f"srt_correct: {srt_path}")
     return srt_path
 
