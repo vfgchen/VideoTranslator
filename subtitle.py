@@ -17,7 +17,7 @@ model    = "deepseek-ai/DeepSeek-V3.2-Exp"
 res_line_regex = re.compile(r"^(?P<seq>\d+)[\.\s]*(?P<text>.*)$")
 
 # srt 修正，删除空行，合并短行和单个单词行
-async def srt_correct(srt_path, min_duration=1000):
+async def srt_correct(srt_path, min_duration=1000, min_word_count=1):
     # 读取 srt 文件
     raw_subs = pysrt.open(srt_path)
     # 去除其中 text 为空的 sub
@@ -28,7 +28,7 @@ async def srt_correct(srt_path, min_duration=1000):
     res_subs = []
     while index < len(raw_subs):
         sub = raw_subs[index]
-        if sub.end - sub.start <= min_duration or len(sub.text.strip().split(" ")) == 1:
+        if sub.end - sub.start <= min_duration or len(sub.text.strip().split(" ")) <= min_word_count:
             merge_up = (index != 0 and not raw_subs[index-1].text.strip()[-1] in [*".?!"]) or (index == len(raw_subs)-1)
             if merge_up:
                 prev_sub = res_subs[-1]
@@ -47,7 +47,7 @@ async def srt_correct(srt_path, min_duration=1000):
     for index, sub in enumerate(res_subs, start=1):
         sub.index = index
     # 重新保存srt
-    pysrt.SubRipFile(res_subs).save(srt_path, encoding="utf-8")
+    pysrt.SubRipFile(res_subs).save(srt_path+".correct", encoding="utf-8")
     print(f"srt_correct: {srt_path}")
     return srt_path
 
