@@ -58,7 +58,7 @@ async def srt_correct(srt_path, min_duration=2000, min_word_count=4, retry_count
         sub.index = index
     
     # 重新保存srt
-    pysrt.SubRipFile(res_subs).save(with_ext(srt_path, "cor"), encoding="utf-8")
+    pysrt.SubRipFile(res_subs).save(srt_path, encoding="utf-8")
     print(f"srt_correct: {srt_path}")
     return srt_path
 
