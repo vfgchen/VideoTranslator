@@ -14,42 +14,40 @@ from funasr.utils.postprocess_utils import rich_transcription_postprocess
 # SenseVoice 语音识别器
 class SenseVoiceAudioRecognizer(AudioRecognizer):
     def __init__(self,
-            model_dir      = model_dir,
-            vad_model_dir  = "iic/speech_fsmn_vad_zh-cn-16k-common-pytorch",
-            asr_model_dir  = "iic/SenseVoiceSmall",
-            device         = "cuda" if torch.cuda.is_available() else "cpu",
-            lang           = "en"
+            model_dir  = model_dir,
+            vad_model  = "iic/speech_fsmn_vad_zh-cn-16k-common-pytorch",
+            asr_model  = "iic/SenseVoiceSmall",
+            device     = "cuda" if torch.cuda.is_available() else "cpu",
+            lang       = "en"
         ):
         """
         加载 SenseVoice 模型
         """
-        print(f"SenseVoice: model_dir={model_dir}, vad_model: {vad_model_dir}, asr_model: {asr_model_dir}, device: {device}")
+        print(f"SenseVoice: model_dir={model_dir}, vad_model: {vad_model}, asr_model: {asr_model}, device: {device}")
         self.model_dir     = model_dir
-        self.vad_model_dir = vad_model_dir
-        self.asr_model_dir = asr_model_dir
         self.device        = device
 
         # 模型路径
-        vad_model_path = path.join(model_dir, vad_model_dir)
-        asr_model_path = path.join(model_dir, asr_model_dir)
+        vad_model_path = path.join(model_dir, vad_model)
+        asr_model_path = path.join(model_dir, asr_model)
 
         # 加载VAD模型
         self.vad_model = AutoModel(
-            model           = vad_model_dir,
+            model           = vad_model,
             model_path      = vad_model_path,
             device          = device,
             disable_update  = True,
 
-            max_single_segment_time = 20000,  # 最大单个片段时长
             merge_vad               = True,
             merge_length_s          = 8,     # 合并长度，单位为秒
-            # max_end_silence_time    = 300,    # 静音阈值，范围500ms～6000ms，默认值800ms。
-            min_silence_duration_ms = 400,    # 静音阈值，范围500ms～6000ms，默认值800ms。
+            max_single_segment_time = 10000,  # 最大单个片段时长
+            min_silence_duration_ms = 550,    # 静音阈值，范围500ms～6000ms，默认值500ms。
+            max_end_silence_time    = 800,    # 静音阈值，范围500ms～6000ms，默认值800ms。
         )
 
         # 加载 SenseVoice 模型
         self.asr_model = AutoModel(
-            model           = asr_model_dir,
+            model           = asr_model,
             model_path      = asr_model_path,
             device          = device,
             disable_update  = True,
@@ -57,7 +55,6 @@ class SenseVoiceAudioRecognizer(AudioRecognizer):
             use_itn         = True,
             batch_size_s    = 60,
             merge_vad       = True,  # 启用 VAD 断句
-            merge_length_s  = 8,     # 合并长度，单位为秒
             ban_emo_unk     = True,  # 禁用情感标签
         )
     

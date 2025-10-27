@@ -9,7 +9,7 @@ async def main():
     parser = argparse.ArgumentParser(description="*.txt to *.req")
     parser.add_argument("--subtitle_dir", help="subtitle directory", default="subtitles")
     parser.add_argument("--suffix", help="txt filename suffix", default=".txt")
-    parser.add_argument("--topic", help="topic", default="Dynamics 365 CRM")
+    parser.add_argument("--topic", help="topic", default="Power Platform & Dynamics 365 CRM")
     args = parser.parse_args()
 
     subtitle_dir=args.subtitle_dir
