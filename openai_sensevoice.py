@@ -3,7 +3,9 @@ import torch
 import pysrt
 import emoji
 import soundfile
-from io import path
+
+from os import path
+from functools import partial
 from common_util import *
 from audio import AudioRecognizer
 from funasr import AutoModel
@@ -57,8 +59,15 @@ class SenseVoiceAudioRecognizer(AudioRecognizer):
         )
     
     async def recognize(self, audio_path) -> pysrt.SubRipFile:
-        # 获取 vad 分段
-        vad_res = self.vad_model.generate(input=audio_path, cache={})
+        """
+        语言识别
+        """
+        # 获取 vad 分段，线程池中运行转录，避免阻塞事件循环
+        vad_res = await run_in_eventloop(
+            partial(self.vad_model.generate, cache={}),
+            audio_path
+        )
+
         vad_segments = vad_res[0]["value"]
         if len(vad_segments) == 0: return []
 
@@ -74,11 +83,14 @@ class SenseVoiceAudioRecognizer(AudioRecognizer):
             end_sample = int(end * sample_rate / 1000)  # 转换为样本数
             audio_segment = audio_data[start_sample : end_sample]
 
-            # 语音转文字处理
+            # 语音转文字处理，线程池中运行转录，避免阻塞事件循环
             with io.BytesIO() as buffer:
                 soundfile.write(buffer, audio_segment, sample_rate, format="WAV")
                 buffer.seek(0)  # 重置缓冲区指针到开头
-                asr_res = self.asr_model.generate(input=buffer, cache={})
+                asr_res = await run_in_eventloop(
+                    partial(self.asr_model.generate, cache={}),
+                    buffer,
+                )
 
             # 处理输出结果
             text = rich_transcription_postprocess(asr_res[0]["text"])
