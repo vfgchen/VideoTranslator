@@ -9,7 +9,7 @@ from openai_sensevoice import *
 async def audio_to_subtitle(audio_path, recognizer: AudioRecognizer):
     srt_name = with_ext(path.basename(audio_path), "srt")
     srt_path = project_resolve(subtitle_dir, srt_name)
-    await audio_to_srt(audio_path, srt_path, recognizer, delete_audio=True)
+    await audio_to_srt(audio_path, srt_path, recognizer, delete_audio=False)
 
 async def main():
     parser = argparse.ArgumentParser(description="audio to srt")

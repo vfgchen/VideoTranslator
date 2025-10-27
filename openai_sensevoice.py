@@ -41,8 +41,10 @@ class SenseVoiceAudioRecognizer(AudioRecognizer):
             disable_update  = True,
 
             max_single_segment_time = 20000,  # 最大单个片段时长
-            merge_length_s          = 10,     # 合并长度，单位为秒
-            max_end_silence_time    = 500,    # 静音阈值，范围500ms～6000ms，默认值800ms。
+            merge_vad               = True,
+            merge_length_s          = 8,     # 合并长度，单位为秒
+            # max_end_silence_time    = 300,    # 静音阈值，范围500ms～6000ms，默认值800ms。
+            min_silence_duration_ms = 400,    # 静音阈值，范围500ms～6000ms，默认值800ms。
         )
 
         # 加载 SenseVoice 模型
@@ -55,6 +57,7 @@ class SenseVoiceAudioRecognizer(AudioRecognizer):
             use_itn         = True,
             batch_size_s    = 60,
             merge_vad       = True,  # 启用 VAD 断句
+            merge_length_s  = 8,     # 合并长度，单位为秒
             ban_emo_unk     = True,  # 禁用情感标签
         )
     
