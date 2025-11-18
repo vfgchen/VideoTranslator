@@ -139,10 +139,11 @@ async def res_check(res_path) -> Tuple[bool, str, str]:
     txt_lines = [line.strip() for line in await read_lines(txt_path) if len(line.strip()) > 0]
 
     # 校验行数
-    len_res  = len(en_res_lines)
+    len_en_res  = len(en_res_lines)
+    len_zh_res  = len(zh_res_lines)
     len_txt  = len(txt_lines)
-    if len_res != len_txt:
-        return False, res_name, f"{res_name} : {len_res} : {len_txt} : {txt_name}"
+    if len_en_res != len_txt or len_en_res != len_zh_res:
+        return False, res_name, f"{res_name} : {len_en_res} : {len_txt} : {txt_name}"
     
     # 校验序号
     for index, res_line in enumerate([*en_res_lines, *zh_res_lines]):
