@@ -13,7 +13,7 @@ async def main():
     parser.add_argument("--base_url", help="ai chat base url", default="https://api.siliconflow.cn/v1")
     parser.add_argument("--api_key", help="api_key", default=f"{os.environ.get("OPENAI_API_KEY")}")
     parser.add_argument("--model", help="model", default="deepseek-ai/DeepSeek-V3.2-Exp")
-    parser.add_argument("--topic", help="topic", default="Power Platform & Dynamics 365 CRM")
+    parser.add_argument("--topic", help="topic", default="Dynamics 365 CRM")
     args = parser.parse_args()
 
     subtitle_dir=args.subtitle_dir
