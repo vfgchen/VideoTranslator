@@ -15,7 +15,7 @@ async def main():
     parser = argparse.ArgumentParser(description="audio to srt")
     parser.add_argument("--audio_dir", help="audio directory", default="audios")
     parser.add_argument("--suffix", help="audio filename suffix", default=".mp3")
-    parser.add_argument("--recognizer", help="audio recognizer", choices=["whipser", "sensevoice"], default="sensevoice")
+    parser.add_argument("--recognizer", help="audio recognizer", choices=["whisper", "sensevoice"], default="sensevoice")
     parser.add_argument("--model_name", help="whisper model name", default="medium")
     args = parser.parse_args()
 
@@ -25,7 +25,7 @@ async def main():
     recognizer=args.recognizer.lower()
 
     # audio recognizer
-    if recognizer == "whipser":
+    if recognizer == "whisper":
         audio_recognizer = WhisperAudioRecognizer(model_name=model_name)
     elif recognizer == "sensevoice":
         audio_recognizer = SenseVoiceAudioRecognizer()
