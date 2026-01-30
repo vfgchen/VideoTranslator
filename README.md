@@ -6,6 +6,9 @@
 !pip install srtranslator
 !pip install edge-srt-to-speech
 !pip install torch
+!pip install torchcodec
+!pip install torchvision
+!pip install torchaudio
 
 # deepseek
 !pip install openai
