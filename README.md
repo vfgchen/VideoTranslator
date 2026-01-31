@@ -4,6 +4,7 @@
 !pip install ffmpeg
 !pip install openai-whisper
 !pip install srtranslator
+!pip install edge-tts
 !pip install edge-srt-to-speech
 !pip install torch
 !pip install torchcodec
