@@ -17,7 +17,7 @@ async def namp4_mp3_srts_merge(file_path, mp4_dir, mp3_dir, srt_dir, srt_type="a
     assert path.exists(namp4_path)
     assert path.exists(zhmp3_path)
     assert path.exists(ensrt_path)
-    assert path.exists(zhsrt_path)
+    assert path.exists(zhsrt_path), zhsrt_path
     return await video_audio_srts_merge(
         na_video=namp4_path,
         zh_audio=zhmp3_path,
